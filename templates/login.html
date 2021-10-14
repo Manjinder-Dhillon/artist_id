@@ -1,0 +1,25 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %} {{ message }} {% endfor %} {% endif %} {% endwith %}
+    <h1>Log In</h1>
+
+    <form method="POST" action="/artist" autocomplete="on">
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="submit" value="Submit">
+    </form>
+
+    <div>
+        <form action="/">
+            <label for=""> Sign up</label>
+            <input type="submit" value="Sign Up">
+        </form>
+    </div>
+
+</body>
+
+</html>

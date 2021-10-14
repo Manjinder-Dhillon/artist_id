@@ -1,0 +1,33 @@
+<html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %} {{ message }} {% endfor %} {% endif %} {% endwith %}
+
+
+    <h1>Sign up!</h1>
+
+    <form method="POST" action="signup" autocomplete="on">
+
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="submit" value="Submit">
+    </form>
+    <div>
+
+        <form action="/login">
+            <label for=""> Login</label>
+            <input type="submit" value="Login">
+        </form>
+    </div>
+
+
+
+</body>
+
+</html>

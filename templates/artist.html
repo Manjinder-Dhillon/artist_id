@@ -1,0 +1,22 @@
+<html>
+
+<head></head>
+<link rel="stylesheet" href="/static/style.css">
+<div class="artist">
+
+    <body style="background-color: aquamarine;">
+        {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %} {{ message }} {% endfor %} {% endif %} {% endwith %}
+
+        <h1>Manjinder Song Explorer</h1>
+        <h3>Looks like you don't have anything saved! Use the form below!</h3>
+        <h2>Save a favorite artist id for later:</h2>
+
+        <form method="POST" action="/index" autocomplete="on">
+            <input type="text" name="artist_id" placeholder="Artist ID" required>
+            <input type="submit" value="Submit">
+        </form>
+
+    </body>
+</div>
+
+</html>

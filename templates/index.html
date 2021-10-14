@@ -13,18 +13,23 @@
     </div>
 
     <div id="container">
-        {% for i in range(0,3) %}
+        {% for i in range(0,1) %}
 
         <div class='item'>
-            <h2><b style="text-align: center;"> {{name[i]}}</b></h2>
-            <h2><b style="color:black; margin-left: 90px; color:rgb(31, 20, 23);"> by {{artists[i]}}</b></h2>
-            <img src="{{image[i]}}" style="margin-left: 40px; ">
-            <audio controls src={{preview_url[i]}} style="margin-left: 40px; ">
+            <h2><b> {{name[i]}}</b></h2>
+            <h2><b> by {{artists[i]}}</b></h2>
+            <img src="{{image[i]}}">
+            <audio controls src={{preview_url[i]}}>
                             
                             <code>audio</code> 
                     </audio>
-            <p><a href="{{lyrics_url}}" style="margin-left: 70px; font-size: 20px; text-decoration: none;">Click here to see the Links!</a></p>
+            <p><a href="{{lyrics_url}}" style=" font-size: 20px; text-decoration: none;">Click here to see the Links!</a></p>
 
+            <h2>Save a favorite artist id for later:</h2>
+            <form method="POST" action="/index">
+                <input type="text" name="artist_id" placeholder="Artist ID" required>
+                <input type="submit" value="Submit">
+            </form>
 
         </div>
 
