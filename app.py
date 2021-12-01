@@ -7,8 +7,6 @@ from dotenv import find_dotenv, load_dotenv
 
 from flask import  render_template, url_for, redirect, flash
 
-from flask_login import UserMixin
-
 
 load_dotenv(find_dotenv())
 
@@ -28,7 +26,7 @@ app.config["SECRET_KEY"] = secret_key
 db = SQLAlchemy(app)
 
 # define some Models!
-class Todo(db.Model, UserMixin):
+class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120))
 
@@ -44,14 +42,7 @@ class Todo_A(db.Model):
 
 db.create_all()
 
-login_manager = LoginManager()
-login_manager.login_view = "login"
-login_manager.init_app(app)
 
-
-@login_manager.user_loader
-def load_user(user_name):
-    return Todo.query.get(user_name)
 # signup page
 @app.route('/sign')
 def sign():
