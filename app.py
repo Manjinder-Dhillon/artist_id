@@ -4,13 +4,16 @@ from flask_sqlalchemy import SQLAlchemy
 from spotify import get_track_info
 from genius import get_lyric
 from dotenv import find_dotenv, load_dotenv
-
+from flask_login import login_user, LoginManager
+from flask_login import UserMixin
 from flask import  render_template, url_for, redirect, flash
 
 
 load_dotenv(find_dotenv())
 
 app = flask.Flask(__name__)
+
+
 
 # database url
 url = os.getenv("DATABASE_URL")
@@ -26,7 +29,7 @@ app.config["SECRET_KEY"] = secret_key
 db = SQLAlchemy(app)
 
 # define some Models!
-class Todo(db.Model):
+class Todo(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120))
 
@@ -42,7 +45,14 @@ class Todo_A(db.Model):
 
 db.create_all()
 
+login_manager = LoginManager()
+login_manager.login_view = "login"
+login_manager.init_app(app)
 
+
+@login_manager.user_loader
+def load_user(user_name):
+    return Todo.query.get(user_name)
 # signup page
 @app.route('/sign')
 def sign():
@@ -70,7 +80,7 @@ def login():
     return flask.render_template("login.html")
 
 
-@app.route("/login_flask", methods=["POST"])
+@app.route("/login", methods=["POST"])
 def login_post():
     
     username = flask.request.form.get("username")
@@ -135,8 +145,8 @@ def index():
 
 
 app.run(
-    # debug=True
+    debug=True
     # host='0.0.0.0',
-    host=os.getenv("IP", "0.0.0.0"),
-    port=int(os.getenv("PORT", "8080")),
+    # host=os.getenv("IP", "0.0.0.0"),
+    # port=int(os.getenv("PORT", "8080")),
 )

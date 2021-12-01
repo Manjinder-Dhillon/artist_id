@@ -1,7 +1,3 @@
-body {
-    background-color: #f3e5f5;
-}
-
 .header {
     text-align: center;
     background-color: blueviolet;
@@ -40,10 +36,6 @@ h2 {
         background-color: blueviolet;
         ;
     }
-}
-
-.flashes {
-    color: brown;
 }
 
 .artist {
