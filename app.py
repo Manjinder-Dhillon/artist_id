@@ -5,10 +5,8 @@ from spotify import get_track_info
 from genius import get_lyric
 from dotenv import find_dotenv, load_dotenv
 
-from flask import  render_template, url_for, redirect, flash, session
+from flask import  render_template, url_for, redirect, flash
 
-
-from authlib.integrations.flask_client import OAuth
 from flask_login import UserMixin
 
 
