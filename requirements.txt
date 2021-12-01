@@ -4,3 +4,6 @@ requests
 flask_sqlalchemy
 SQLAlchemy
 psycopg2
+flask-login
+Flask-SQLAlchemy
+psycopg2-binary
