@@ -4,14 +4,11 @@ from flask_sqlalchemy import SQLAlchemy
 from spotify import get_track_info
 from genius import get_lyric
 from dotenv import find_dotenv, load_dotenv
-from datetime import timedelta
-from flask import Flask, render_template, url_for, request, redirect, flash, session
-from flask_login import login_user, current_user, logout_user, login_required
+
+from flask import  render_template, url_for, redirect, flash, session
+
 import flask
-from flask_login import login_user, current_user, LoginManager
-from flask_login.utils import login_required
-from flask import Flask, flash, redirect, render_template, \
-     request, url_for
+from flask_login import login_user, LoginManager
 from datetime import timedelta
 from authlib.integrations.flask_client import OAuth
 from flask_login import UserMixin
