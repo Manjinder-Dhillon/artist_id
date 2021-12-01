@@ -4,10 +4,31 @@ from flask_sqlalchemy import SQLAlchemy
 from spotify import get_track_info
 from genius import get_lyric
 from dotenv import find_dotenv, load_dotenv
+from datetime import timedelta
+from flask import Flask, render_template, url_for, request, redirect, flash, session
+from flask_login import login_user, current_user, logout_user, login_required
+import flask
+from flask_login import login_user, current_user, LoginManager
+from flask_login.utils import login_required
+from flask import Flask, flash, redirect, render_template, \
+     request, url_for
+from datetime import timedelta
+from authlib.integrations.flask_client import OAuth
+from flask_login import UserMixin
+
 
 load_dotenv(find_dotenv())
 
 app = flask.Flask(__name__)
+
+global client_id
+global client_secret
+
+client_Id = os.getenv("client_Id")
+client_Secret = os.getenv("client_Secret")
+# secret key
+secret_key = os.getenv("secret_key")
+app.config["SECRET_KEY"] = secret_key
 
 # database url
 url = os.getenv("DATABASE_URL")
@@ -20,11 +41,32 @@ app.config["SQLALCHEMY_DATABASE_URI"] = url
 secret_key = os.getenv("secret_key")
 app.config["SECRET_KEY"] = secret_key
 
+app.config['SESSION_COOKIE_NAME'] = 'google-login-session'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
+
+
+
+
+# oAuth Setup
+oauth = OAuth(app)
+google = oauth.register(
+    name='google',
+    client_id=client_Id,
+    client_secret=client_Secret,
+    access_token_url='https://accounts.google.com/o/oauth2/token',
+    access_token_params=None,
+    authorize_url='https://accounts.google.com/o/oauth2/auth',
+    authorize_params=None,
+    api_base_url='https://www.googleapis.com/oauth2/v1/',
+    userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',  # This is only needed if using openId to fetch user info
+    client_kwargs={'scope': 'openid email profile'},
+)
+
 
 db = SQLAlchemy(app)
 
 # define some Models!
-class Todo(db.Model):
+class Todo(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120))
 
@@ -33,62 +75,81 @@ class Todo_artist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     artist_id = db.Column(db.String(120))
 
+class Todo_A(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    artist = db.Column(db.String(120))    
+
 
 db.create_all()
 
+login_manager = LoginManager()
+login_manager.login_view = "login"
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_name):
+    return Todo.query.get(user_name)
 # signup page
-@app.route("/", methods=["GET", "POST"])
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    todos = Todo.query.all()
-    username = []
-    for todo in todos:
-        username.append(todo.username)
-    if flask.request.method == "POST":
-        username_check = flask.request.form.get("username")
-        # checking existing user or not
-        for i in username:
-            if username_check == i:
-                flask.flash("id exists. login")
-                return flask.redirect("/login")
-        todo = Todo(username=username_check)
-        db.session.add(todo)
-        db.session.commit()
+@app.route('/sign')
+def sign():
+    return render_template('signup.html')
 
-    return flask.render_template(
-        "signup.html",
-        username=username,
-    )
+@app.route('/sign', methods=['POST'])
+def sign_post():
+    username = flask.request.form.get('username')
+   
 
+    user = Todo.query.filter_by(username=username).first()
+
+    if user:
+        flash('Username  already exists.')
+        return redirect(url_for('login'))
+
+    new_user = Todo( username=username)
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return redirect(url_for('login'))
 
 # login page
-@app.route("/login", methods=["GET", "POST"])
+@app.route('/login')
+def googleLogin():
+    google = oauth.create_client('google')  # create the google oauth client
+    redirect_uri = url_for('authorize', _external=True)
+    return google.authorize_redirect(redirect_uri)
+      
+
+
+@app.route("/")
 def login():
-    todos = Todo.query.all()
-    username = []
-    for todo in todos:
-        username.append(todo.username)
-    if flask.request.method == "POST":
-        username_check = flask.request.form.get("username")
-        # checking existing user or not
-        for i in username:
-            if username_check == i:
-                flask.flash("id  exists.  artist")
-                return flask.redirect("/artist")
-            if username_check != i:
-                flask.flash("id doesnot exists. SIGN UP!")
-                return flask.redirect("/signup")
-
-        todo = Todo(username=username_check)
-        db.session.add(todo)
-        db.session.commit()
-
-    return flask.render_template(
-        "login.html",
-        username=username,
-    )
+    return flask.render_template("login.html")
 
 
+@app.route("/login_flask", methods=["POST"])
+def login_post():
+    
+    username = flask.request.form.get("username")
+    user = Todo.query.filter_by(username=username).first()
+    if user:
+        login_user(user)
+        return flask.redirect("/artist")
+
+    else:
+        flash(u'Invalid login provided. Click on Signup now to create', 'error')
+        return redirect(url_for('login'))
+
+@app.route('/authorize')
+def authorize():
+    google = oauth.create_client('google')  # create the google oauth client
+    token = google.authorize_access_token()  # Access token from google (needed to get user info)
+    resp = google.get('userinfo')  # userinfo contains stuff u specificed in the scrope
+    user_info = resp.json()
+    user = oauth.google.userinfo()  # uses openid endpoint to fetch user info
+    session['profile'] = user_info
+    session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
+    return redirect('/artist')
 # artist page
 @app.route("/artist", methods=["GET", "POST"])  # Python decorator
 def get_artist_id():
@@ -140,7 +201,8 @@ def index():
 
 
 app.run(
+    debug=True
     # host='0.0.0.0',
-    host=os.getenv("IP", "0.0.0.0"),
-    port=int(os.getenv("PORT", "8080")),
+    # host=os.getenv("IP", "0.0.0.0"),
+    # port=int(os.getenv("PORT", "8080")),
 )

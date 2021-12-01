@@ -1,25 +1,104 @@
-<html>
+<!DOCTYPE html>
+<!-- Created By CodingNepal -->
+<html lang="en" dir="ltr">
 
 <head>
-    <link rel="stylesheet" href="/static/style.css">
+    <meta charset="utf-8">
+    <!-- <title>Popup Login Form Design | CodingNepal</title> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .google-btn {
+            width: 184px;
+            height: 42px;
+            background-color: #4285f4;
+            border-radius: 2px;
+            box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.25);
+            display: block;
+        }
+        
+        .google-btn .google-icon-wrapper {
+            position: absolute;
+            margin-top: 1px;
+            margin-left: 1px;
+            width: 40px;
+            height: 40px;
+            border-radius: 2px;
+            background-color: #fff;
+        }
+        
+        .google-btn .google-icon {
+            position: absolute;
+            margin-top: 11px;
+            margin-left: 11px;
+            width: 18px;
+            height: 18px;
+        }
+        
+        .google-btn .btn-text {
+            float: right;
+            margin: 11px 11px 0 0;
+            color: #fff;
+            font-size: 14px;
+            letter-spacing: 0.2px;
+            font-family: "Roboto";
+        }
+        
+        .google-btn:hover {
+            box-shadow: 0 0 6px #4285f4;
+        }
+        
+        .google-btn:active {
+            background: #1669f2;
+        }
+    </style>
 </head>
 
 <body>
-    {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %} {{ message }} {% endfor %} {% endif %} {% endwith %}
-    <h1>Log In</h1>
 
-    <form method="POST" action="/artist" autocomplete="on">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="submit" value="Submit">
-    </form>
-
-    <div>
-        <form action="/">
-            <label for=""> Sign up</label>
-            <input type="submit" value="Sign Up">
-        </form>
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        <span>{{ message }}</span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">×</span>
+                </button>
     </div>
+    {% endfor %} {% endif %} {% endwith %}
+    <div class="container">
+        <div class="text">
+            Login Form</div>
+        <br>
 
+        <a href="/login" class="google-btn">
+            <div class="google-icon-wrapper">
+                <img class="google-icon" src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" />
+            </div>
+            <p class="btn-text"><b>Sign in with google</b></p>
+        </a>
+
+        <br>
+        <h5>OR</h5>
+        <br>
+        <form method="POST" action="/login_flask">
+            <div class="data">
+                <label>Username</label>
+                <input type="text" name="username" required>
+            </div>
+            <div class="data">
+                <label>Password</label>
+                <input type="password" required>
+            </div>
+
+            <div class="btn">
+                <div class="inner">
+                </div>
+                <button type="submit">login</button>
+            </div>
+            <div class="signup-link">
+                Not a member? <a href={{ url_for( 'sign' ) }}>Sign up</a>
+        </form>
+
+        </div>
 </body>
 
 </html>
