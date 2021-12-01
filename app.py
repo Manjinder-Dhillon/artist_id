@@ -64,7 +64,7 @@ def sign_post():
     user = Todo.query.filter_by(username=username).first()
 
     if user:
-        flash(u'Username  already exists.','error')
+        flash(u'Username  already exists.Login Instead','error')
         return redirect(url_for('login'))
 
     new_user = Todo( username=username)
