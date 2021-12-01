@@ -7,9 +7,7 @@ from dotenv import find_dotenv, load_dotenv
 
 from flask import  render_template, url_for, redirect, flash, session
 
-import flask
-from flask_login import login_user, LoginManager
-from datetime import timedelta
+
 from authlib.integrations.flask_client import OAuth
 from flask_login import UserMixin
 
