@@ -1,15 +1,41 @@
 <html>
 
-<head></head>
-<link rel="stylesheet" href="/static/style.css">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        ul {
+            list-style-position: outside;
+        }
+    </style>
+</head>
+
 <div class="artist">
 
-    <body style="background-color: aquamarine;">
+    <body style="background-color: rgb(127, 255, 212);">
         {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %} {{ message }} {% endfor %} {% endif %} {% endwith %}
 
         <h1>Manjinder Song Explorer</h1>
         <h3>Looks like you don't have anything saved! Use the form below!</h3>
         <h2>Save a favorite artist id for later:</h2>
+        <p><b>Here are some id to test and try - </b></p>
+
+        <dl>
+            <dt><b>Billie Eilish:</b>6qqNVTkY8uBg9cP3Jd7DAH</dt>
+            <dd></dd>
+            <dt><b>Drake:</b>3TVXtAsR1Inumwj472S9r4</dt>
+            <dd></dd>
+            <dt><b>Diljit Dosanjh:</b>2FKWNmZWDBZR4dE5KX4plR</dt>
+            <dd></dd>
+            <dt><b>Justin Bieber:</b>1uNFoZAHBGtllmzznpCI3s</dt>
+            <dd></dd>
+        </dl>
+
+
+
+        <br>
 
         <form method="POST" action="/index" autocomplete="on">
             <input type="text" name="artist_id" placeholder="Artist ID" required>
